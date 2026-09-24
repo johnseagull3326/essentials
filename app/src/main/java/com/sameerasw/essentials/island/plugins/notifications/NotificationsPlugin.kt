@@ -124,7 +124,7 @@ class NotificationsPlugin : BaseIslandPlugin() {
             return
         }
         if (settings.isIslandCatchUpEnabled() && alerts.isNotEmpty()) {
-            c.mainHandler.postDelayed(catchUpRunnable, settings.getIslandCatchUpTimeoutMs())
+            if (!settings.isIslandCatchUpInfinite()) c.mainHandler.postDelayed(catchUpRunnable, settings.getIslandCatchUpTimeoutMs())
             return
         }
         clearAll()
