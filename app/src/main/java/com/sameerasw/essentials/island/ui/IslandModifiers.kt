@@ -1,6 +1,9 @@
 package com.sameerasw.essentials.island.ui
 
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.border
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.animation.core.Animatable
@@ -41,3 +44,6 @@ fun Modifier.animatePlacement(fromEnd: Boolean = false): Modifier = composed {
 
 fun Modifier.squareFit(size: Dp): Modifier =
     sizeIn(maxWidth = size, maxHeight = size).aspectRatio(1f, matchHeightConstraintsFirst = true)
+
+fun Modifier.islandOutline(color: Color?, thickness: Dp, shape: Shape): Modifier =
+    if (color == null || color.alpha <= 0f) this else border(thickness, color, shape)
