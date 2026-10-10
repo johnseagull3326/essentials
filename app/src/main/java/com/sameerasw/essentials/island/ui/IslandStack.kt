@@ -44,7 +44,13 @@ private const val BUBBLE_MAX_MINIS = 3
 private const val PILL_MAX_ICONS = 5
 
 @Composable
-fun IslandStackBubble(icons: List<StackIcon>, size: Dp, modifier: Modifier = Modifier) {
+fun IslandStackBubble(
+    icons: List<StackIcon>,
+    size: Dp,
+    modifier: Modifier = Modifier,
+    outlineColor: Color? = null,
+    outlineThickness: Dp = 1.dp,
+) {
     val shown = icons.takeLast(BUBBLE_MAX_MINIS)
     val count = shown.size
     val iconSize = when (count) {
@@ -62,7 +68,8 @@ fun IslandStackBubble(icons: List<StackIcon>, size: Dp, modifier: Modifier = Mod
         modifier = modifier
             .size(size)
             .clip(CircleShape)
-            .background(Color.Black),
+            .background(Color.Black)
+            .islandOutline(outlineColor, outlineThickness, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         shown.forEachIndexed { i, icon ->
@@ -97,12 +104,15 @@ fun IslandStackPill(
     iconSize: Dp,
     interactive: Boolean,
     modifier: Modifier = Modifier,
+    outlineColor: Color? = null,
+    outlineThickness: Dp = 1.dp,
 ) {
     val ring = MaterialTheme.colorScheme.primary
     Row(
         modifier = modifier
             .clip(CircleShape)
             .background(Color.Black)
+            .islandOutline(outlineColor, outlineThickness, CircleShape)
             .animateContentSize(IslandMotion.compactSize)
             .padding(horizontal = 6.dp, vertical = 5.dp),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
@@ -183,6 +193,8 @@ fun IslandSideBubble(
     bubbleFor: (String) -> SideBubble?,
     size: Dp,
     modifier: Modifier = Modifier,
+    outlineColor: Color? = null,
+    outlineThickness: Dp = 1.dp,
 ) {
     Box(modifier.size(size)) {
         AnimatedContent(
@@ -195,11 +207,15 @@ fun IslandSideBubble(
                 val content = bubble.content
                 if (content != null) {
                     Box(
-                        Modifier.size(size).clip(CircleShape).background(Color.Black),
+                        Modifier
+                            .size(size)
+                            .clip(CircleShape)
+                            .background(Color.Black)
+                            .islandOutline(outlineColor, outlineThickness, CircleShape),
                         contentAlignment = Alignment.Center,
                     ) { content(size * 0.72f) }
                 } else {
-                    IslandStackBubble(bubble.icons, size)
+                    IslandStackBubble(bubble.icons, size, outlineColor = outlineColor, outlineThickness = outlineThickness)
                 }
             }
         }

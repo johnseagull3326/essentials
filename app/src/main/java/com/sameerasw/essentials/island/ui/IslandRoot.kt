@@ -202,6 +202,9 @@ fun IslandRoot(
     val animatedOutlineColor: Color? = spec.outlineColor?.let { base ->
         animateColorAsState(dynamicOutline ?: base, label = "islandOutlineColor").value
     }
+    fun outlineFor(fade: Float): Color? = animatedOutlineColor
+        ?.takeIf { outlineAlpha > 0f && fade > 0f }
+        ?.let { it.copy(alpha = it.alpha * outlineAlpha * fade) }
     val pulse = remember { Animatable(0f) }
     LaunchedEffect(state.focusedKey, spec.pulseShadow) {
         pulse.snapTo(0f)
@@ -532,6 +535,8 @@ fun IslandRoot(
                 IslandStackBubble(
                     icons = lastQueuedIcons,
                     size = spec.compactHeight,
+                    outlineColor = outlineFor(1f),
+                    outlineThickness = spec.outlineThickness,
                     modifier = Modifier
                         .queueSlot(1f, 0.6f) { k -> (1f - k * 2f).coerceIn(0f, 1f) }
                         .pointerInput(Unit) {
@@ -551,6 +556,8 @@ fun IslandRoot(
                     selectedKey = lastFullStack.firstOrNull { it.current }?.key,
                     iconSize = 30.dp,
                     interactive = stage == IslandStage.Expanded,
+                    outlineColor = outlineFor(1f),
+                    outlineThickness = spec.outlineThickness,
                     modifier = Modifier
                         .queueSlot(0.5f, 1f, slides = true) { k -> ((k - 0.3f) / 0.7f).coerceIn(0f, 1f) }
                         .onSizeChanged { pillSize = it },
@@ -568,6 +575,8 @@ fun IslandRoot(
                     ownerKey = lastBubbleKey,
                     bubbleFor = { knownBubbles[it] },
                     size = spec.compactHeight,
+                    outlineColor = outlineFor(1f),
+                    outlineThickness = spec.outlineThickness,
                     modifier = Modifier
                         .offset {
                             if (bubbleOnlyLayout) {
@@ -680,8 +689,8 @@ fun IslandRoot(
                 }
                 .background(Color.Black)
                 .then(
-                    animatedOutlineColor?.takeIf { outlineAlpha > 0f }
-                        ?.let { Modifier.border(spec.outlineThickness, it.copy(alpha = it.alpha * outlineAlpha * (1f - bond)), surfaceShape) }
+                    outlineFor(1f - bond)
+                        ?.let { Modifier.border(spec.outlineThickness, it, surfaceShape) }
                         ?: Modifier,
                 )
                 // Finger-driven shrink sits inside the clip/background so the pill itself follows the drag.
